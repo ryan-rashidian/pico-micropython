@@ -1,23 +1,24 @@
-from wifi_connect import connect
-from machine import Pin # type: ignore
 from time import sleep
 
+from wifi_connect import connect
+
+from machine import Pin # type: ignore
+
 led = Pin('WL_GPIO0', Pin.OUT)
-led.on()
 
 SSID = 'WiFi_SSID'
 PASSWORD = 'WiFi_Password'
 
-if connect(SSID, PASSWORD):
-    print('Connection successful.')
+def main():
     try:
         while True:
-            led.toggle()
-            sleep(1)
+            print('Attempting WiFi connection...')
+            connect(SSID, PASSWORD)
+            print('Retrying...')
+            sleep(5)
     except KeyboardInterrupt:
         led.off()
         print('Stopped by user.')
-else:
-    led.off()
-    print('Connection failed.')
 
+if __name__ == '__main__':
+    main()
