@@ -8,6 +8,7 @@ from machine import Pin # type: ignore
 led = Pin('WL_GPIO0', Pin.OUT)
 wlan = network.WLAN(network.STA_IF)
 server = socket.socket()
+server.setblocking(False)
 
 running = True
 
@@ -21,22 +22,27 @@ async def _serve_http():
     while running:
         try:
             conn, addr = server.accept()
+            print(f'Client connected: {addr}')
+            # Read and discard HTTP request to clear socket buffer
+            conn.setblocking(True)
+            try:
+                _ = conn.recv(1024)
+            except Exception:
+                conn.close()
+                continue
+
+            response = b"""\
+            Pico 2 W running mini HTTP server.
+            """
+            conn.send(response)
+            conn.close()
+            for _ in range(10):
+                led.toggle()
+                await uasyncio.sleep(0.1)
         except OSError:
             led.toggle()
             await uasyncio.sleep(1)
             continue
-
-        led.on()
-        print(f'Client connected: {addr}')
-        # Read and discard HTTP request to clear socket buffer
-        _ = conn.recv(1024)
-
-        response = b"""\
-        Pico 2 W running mini HTTP server.
-        """
-        conn.send(response)
-        conn.close()
-        led.off()
 
 def _stop_server():
     global running

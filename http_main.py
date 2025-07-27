@@ -8,8 +8,7 @@ PASSWORD = 'WiFi_Password'
 async def main():
     await connect(SSID, PASSWORD)
     while True:
-        print('Attempting WiFi connection...')
-        await uasyncio.sleep(1)
+        await uasyncio.sleep(0)
 
 if __name__ == '__main__':
     try:
