@@ -1,7 +1,7 @@
-from utime import sleep, ticks_diff, ticks_ms # type: ignore
+from time import sleep, ticks_diff, ticks_ms # type: ignore
 import network # type: ignore
 import socket
-import uasyncio
+import asyncio
 from machine import Pin # type: ignore
 
 led = Pin('WL_GPIO0', Pin.OUT)
@@ -59,10 +59,10 @@ async def _serve_http():
             conn.close()
             for _ in range(10):
                 led.toggle()
-                await uasyncio.sleep(0.1)
+                await asyncio.sleep(0.1)
         except OSError:
             led.toggle()
-            await uasyncio.sleep(1)
+            await asyncio.sleep(1)
             continue
 
 def _stop_server():
@@ -83,12 +83,12 @@ async def connect(ssid, password):
             if wlan.isconnected():
                 print(f'Connected to Wifi network: {ssid}')
                 break
-            await uasyncio.sleep(0.5)
+            await asyncio.sleep(0.5)
 
     if wlan.isconnected():
         led.off()
         print('Network config:', wlan.ifconfig())
-        uasyncio.create_task(_serve_http())
+        asyncio.create_task(_serve_http())
 
     else:
         print('Connection failed.')
