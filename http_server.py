@@ -1,14 +1,16 @@
-from time import sleep
-
+from utime import sleep, ticks_diff, ticks_ms # type: ignore
 import network # type: ignore
 import socket
 import uasyncio
 from machine import Pin # type: ignore
 
 led = Pin('WL_GPIO0', Pin.OUT)
+
 wlan = network.WLAN(network.STA_IF)
 server = socket.socket()
 server.setblocking(False)
+
+start_time = ticks_ms()
 
 running = True
 
@@ -16,6 +18,7 @@ async def _serve_http():
     addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
     server.bind(addr)
     server.listen(1)
+    start_time = ticks_ms()
     print(f'HTTP server listening on: {addr}')
 
     global running
@@ -23,7 +26,7 @@ async def _serve_http():
         try:
             conn, addr = server.accept()
             print(f'Client connected: {addr}')
-            # Read and discard HTTP request to clear socket buffer
+            # Read and discard HTTP request
             conn.setblocking(True)
             try:
                 _ = conn.recv(1024)
@@ -31,10 +34,28 @@ async def _serve_http():
                 conn.close()
                 continue
 
-            response = b"""\
-            Pico 2 W running mini HTTP server.
-            """
-            conn.send(response)
+            uptime_ms = ticks_diff(ticks_ms(), start_time)
+            uptime_sec = uptime_ms // 1000
+            rssi = wlan.status('rssi')
+            message = "Hello"
+
+            try:
+                with open('index.html', 'r') as f:
+                    html = f.read()
+                    html = html.replace('{{rssi}}', str(rssi))
+                    html = html.replace('{{uptime_sec}}', str(uptime_sec))
+                    html = html.replace('{{message}}', message)
+            except OSError:
+                html = "<h1>File not found</h1>"
+
+            response = (
+                "HTTP/1.1 200 OK\r\n"
+                "Content-Type: text/html\r\n"
+                "\r\n"
+                f"{html}"
+            )
+            
+            conn.send(response.encode())
             conn.close()
             for _ in range(10):
                 led.toggle()
