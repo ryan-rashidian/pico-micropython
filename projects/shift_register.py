@@ -1,56 +1,56 @@
 """Pico-2_W: 8-bit Shift Register.
 
 - Using 74HC595 IC with 8 LEDs for display
-- Simulated clock cycles with time.sleep()
+- Simulated 4Hz clock with time.sleep()
 """
 from machine import Pin # type: ignore
 from time import sleep
 
-register_clock_pin = Pin(11, Pin.OUT)
+register_latch_pin = Pin(11, Pin.OUT)
 shift_clock_pin = Pin(12, Pin.OUT)
-serial_pin = Pin(15, Pin.OUT)
+serial_data_pin = Pin(15, Pin.OUT)
 # 74HC595 pulls LEDs to ground, and helps sink current.
-# serial_pin.low() = on (1) | serial_pin.high() = off (0)
-bit_on = serial_pin.low
-bit_off = serial_pin.high
+# serial_data_pin.low() = on (1) | serial_data_pin.high() = off (0)
+led_on = serial_data_pin.low
+led_off = serial_data_pin.high
 
 decimals = [d for d in range(256)]
 
 def load_byte(dec):
-    register_clock_pin.low()
+    register_latch_pin.low()
     
     for i in range(8):
         shift_clock_pin.low()
         bit = (dec >> i) & 1
         if bit:
-            bit_on()
+            led_on()
         else:
-            bit_off()
+            led_off()
         sleep(0.01)
         shift_clock_pin.high()
         sleep(0.01)
 
-    register_clock_pin.high()
+    register_latch_pin.high()
     sleep(0.01)
 
 def loop():
     while True:
         for d in decimals:
             load_byte(dec=d)
-            sleep(0.22)
+            sleep(0.08)
 
 def destroy():
     # Shift in all zeros to turn off LEDs
-    register_clock_pin.low()
+    register_latch_pin.low()
 
     for _ in range(8):
         shift_clock_pin.low()
-        bit_off()
+        led_off()
         sleep(0.01)
         shift_clock_pin.high()
         sleep(0.01)
 
-    register_clock_pin.high()
+    register_latch_pin.high()
     sleep(0.01)
 
 if __name__ == '__main__':
