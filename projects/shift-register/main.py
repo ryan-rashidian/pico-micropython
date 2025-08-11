@@ -1,10 +1,9 @@
 """Pico-2_W: 8-bit Shift Register.
 
 - Using 74HC595 IC with 8 LEDs for display
-- Simulated 4Hz clock with time.sleep()
+- Timer at 10Hz
 """
-from machine import Pin # type: ignore
-from time import sleep
+from machine import Pin, Timer # type: ignore
 
 register_latch_pin = Pin(11, Pin.OUT)
 shift_clock_pin = Pin(12, Pin.OUT)
@@ -15,10 +14,10 @@ led_on = serial_data_pin.low
 led_off = serial_data_pin.high
 
 decimals = [d for d in range(256)]
+index = 0
 
 def load_byte(dec):
     register_latch_pin.low()
-    
     for i in range(8):
         shift_clock_pin.low()
         bit = (dec >> i) & 1
@@ -26,38 +25,31 @@ def load_byte(dec):
             led_on()
         else:
             led_off()
-        sleep(0.01)
         shift_clock_pin.high()
-        sleep(0.01)
-
     register_latch_pin.high()
-    sleep(0.01)
 
-def loop():
-    while True:
-        for d in decimals:
-            load_byte(dec=d)
-            sleep(0.08)
+def timer_callback(_):
+    global index
+    load_byte(decimals[index])
+    index = (index + 1) % len(decimals)
 
 def destroy():
-    # Shift in all zeros to turn off LEDs
     register_latch_pin.low()
-
     for _ in range(8):
         shift_clock_pin.low()
         led_off()
-        sleep(0.01)
         shift_clock_pin.high()
-        sleep(0.01)
-
     register_latch_pin.high()
-    sleep(0.01)
 
 if __name__ == '__main__':
+    timer = Timer(-1)
     try:
+        timer.init(freq=10, mode=Timer.PERIODIC, callback=timer_callback)
         print('Start Program.')
-        loop()
+        while True:
+            pass
     except KeyboardInterrupt:
+        timer.deinit()
         destroy()
         print('End Program.')
 
