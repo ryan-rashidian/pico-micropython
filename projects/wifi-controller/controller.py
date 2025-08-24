@@ -40,9 +40,13 @@ def loop():
     while True:
         if button_left.value() == 0:
             sock.sendto(b'LEFT', (server_ip, server_port))
+            while button_left.value() == 0:
+                sleep(0.01)
             sleep(0.5)
         if button_right.value() == 0:
             sock.sendto(b'RIGHT', (server_ip, server_port))
+            while button_right.value() == 0:
+                sleep(0.01)
             sleep(0.5)
         sleep(0.1)
 
