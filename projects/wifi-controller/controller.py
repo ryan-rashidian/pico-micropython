@@ -11,7 +11,7 @@ wlan = network.WLAN(network.STA_IF)
 button_left = Pin(11, Pin.IN, Pin.PULL_UP)
 button_right = Pin(12, Pin.IN, Pin.PULL_UP)
 
-server_ip = '192.168.1.10'
+server_ip = 'IP'
 server_port = 12345
 
 wlan.active(True)
