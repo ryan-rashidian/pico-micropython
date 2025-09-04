@@ -1,3 +1,5 @@
+"""Hello World! test using 8-bit LED display."""
+
 from machine import Pin # type: ignore
 from time import sleep
 
@@ -6,15 +8,6 @@ leds = [Pin(i, Pin.OUT) for i in range(8)]
 
 def display_byte(byte: int):
     for i in range(8):
-        # Shift each bit to LSB position and find its value.
-        # Example: 
-        # ASCII for 'h' = 104
-        # or 01101000 in 8-bit binary
-        # 104 >> 5 = 3
-        # or 00000011 in 8-bit binary
-        # Then compare: 3 & 1
-        # or 00000011 & 00000001
-        # = 00000001 = 1
         bit = (byte >> (7 - i)) & 1
         leds[i].value(bit)
 

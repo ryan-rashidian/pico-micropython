@@ -1,3 +1,5 @@
+"""Servo motor test script."""
+
 from machine import Pin, PWM # type: ignore
 from time import sleep
 

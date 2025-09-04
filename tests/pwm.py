@@ -1,3 +1,5 @@
+"""Pulse width modulation test."""
+
 from machine import PWM, Pin # type: ignore
 from time import sleep
 

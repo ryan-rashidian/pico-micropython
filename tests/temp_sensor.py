@@ -1,3 +1,5 @@
+"""Read Pico-2_W internal temperature."""
+
 from machine import ADC # type: ignore
 from time import sleep
 

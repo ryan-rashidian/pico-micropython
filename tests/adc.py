@@ -1,3 +1,5 @@
+"""Analog to Digital Conversion test for Pico-2_W"""
+
 from machine import ADC, Pin # type: ignore
 from time import sleep
 

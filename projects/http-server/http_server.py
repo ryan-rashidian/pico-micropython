@@ -38,19 +38,7 @@ async def _serve_http():
             uptime_sec = uptime_ms // 1000
             rssi = wlan.status('rssi')
             message = """\
-            One ought to hold on to one's heart; for if one lets it go,
-            one soon loses control of the head too.
-            Alas, where in the world has there been more folly than among the pitying?
-            And what in the world has caused more suffering than the folly of the pitying?
-            Woe to all who love without having a height that is above their pity!
-            \n
-            Thus spoke the devil to me once: 
-            "God too has his hell: that is his love of man."
-            \n
-            And most recently I heard him say this:
-            "God is dead: God died of his pity for man."
-            \n
-            - Thus spoke Zarathustra.
+            Test Page
             """
 
             try:
