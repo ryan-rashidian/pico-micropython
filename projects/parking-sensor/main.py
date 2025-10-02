@@ -43,9 +43,9 @@ def main():
     while True:
         dist = get_distance()
 
-        led_green.value(dist < 100)
-        led_yellow.value(dist < 50)
-        led_red.value(dist < 10)
+        led_green.value(dist < 120)
+        led_yellow.value(dist < 60)
+        led_red.value(dist < 30)
 
         print(f'Distance: {dist:.2f} cm')
         sleep(0.1)
