@@ -1,0 +1,2 @@
+micropython-rp2-rpi_pico2_w-stubs==1.26.0.post1
+mpremote==1.26.1
