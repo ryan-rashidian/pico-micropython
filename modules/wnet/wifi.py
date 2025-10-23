@@ -1,5 +1,6 @@
-"""Connect to WiFi on a Pico-2_W"""
+"""Connect to WiFi."""
 
+import config as cfg # Use a config.py for network credentials
 from machine import Pin # type: ignore
 import network # type: ignore
 from time import sleep
@@ -9,8 +10,9 @@ wlan = network.WLAN(network.STA_IF)
 led_wifi = Pin('WL_GPIO0', Pin.OUT)
 
 
-def connect(ssid: str, password: str):
+def connect(ssid: str = cfg.WIFI_SSID, password: str = cfg.WIFI_PASSWORD):
     """Connect to Wifi."""
+    led_wifi.off()
     wlan.active(True)
     wlan.config(pm=wlan.PM_NONE)
 
