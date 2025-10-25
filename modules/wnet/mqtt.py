@@ -6,7 +6,7 @@ from umqtt.simple import MQTTClient
 from wnet import wifi
 
 
-mqtt_client = MQTTClient(cfg.MQTT_CLIENT_ID, cfg.MQTT_BROKER)
+mqtt_client = MQTTClient(cfg.MQTT_CLIENT_ID, cfg.MQTT_BROKER, keepalive=60)
 
 
 def connect() -> None:
